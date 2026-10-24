@@ -1,106 +1,90 @@
-# Hybrid Identity Lifecycle Automation
+# Unified IAM and Help Desk Portal
 
-A home lab for learning how a help desk manages user identities across the full lifecycle (joiner, mover, leaver) in Active Directory and Microsoft Entra ID, with the goal of automating those changes from ITIL-style support tickets.
+A single application that provides Okta-style identity features (single sign-on, multi-factor authentication, role-based access, and user lifecycle management) on top of Microsoft Entra ID, with a help desk ticketing system built into the same product.
 
-> **Status: early stage.** The on-premises Active Directory foundation is built and working. The ticketing workflow, lifecycle scripts, Entra ID sync, and automation are **planned, not built yet**. See the status table below for what exists today.
+> **Status: early stage.** This repository is at the planning stage. The design and milestones below describe what is planned, not what is built. The status table is updated as each piece is completed.
 
-## Goals
+## The problem
 
-- Build an Active Directory environment that works like a small company's (domain controller, domain-joined client, user accounts, Group Policy).
-- Handle common help desk requests (new user, password reset, lockout) the way a support team would, following ITIL-style ticket types.
-- Automate user onboarding, role changes, and offboarding with PowerShell.
-- Extend the lab to a hybrid setup by syncing a limited set of users to Microsoft Entra ID.
-- Document everything, including problems hit along the way.
+Many organizations split identity and support across separate vendors: one product for sign-in and access (for example an identity provider such as Okta), and another for tickets (for example a separate help desk platform). An access request, a password reset, or a new hire then involves a ticket in one system and a manual change in another, with no single record of who requested what, who approved it, and what changed.
 
-## Status
+This project explores a streamlined alternative: identity and ticketing in one application, where an approved ticket drives the identity change and every step is logged in one place.
 
-| Component | Status |
-|---|---|
-| Windows Server promoted to domain controller, domain created | Done |
-| Windows 11 client joined to the domain | Done |
-| User accounts created with PowerShell (about 5 test users) | Done |
-| User administration and password resets | Done |
-| Group Policy: minimum password length and account lockout timer | Done |
-| OUs and role-based security groups | Planned |
-| Ticketing tool with ITIL-style ticket types | Planned |
-| PowerShell joiner and leaver scripts with logging | Planned |
-| Mover (role change) workflow | Planned |
-| Entra ID sync, scoped to a lab OU, with MFA | Planned |
-| Ticket-driven automation worker | Planned |
-| Knowledge base articles for common issues | Planned |
+## What this is, and is not
 
-## Lab environment
+- **It is** an application built on Microsoft Entra ID, using its sign-in, MFA, groups, and Microsoft Graph API to deliver an Okta-like experience (central sign-in, role-based access, lifecycle changes) together with ticketing.
+- **It is not** a re-implementation of Okta. Entra ID is the identity provider. The project's own work is the application layer on top: roles, approvals, ticket-driven lifecycle actions, and audit logging.
+- It runs against a test tenant with fake users. It is a learning project, not a production system.
 
-| Item | Details |
-|---|---|
-| Domain controller | Windows Server `[version]` with AD DS and DNS |
-| Client | Windows 11, built from an ISO and joined to the domain |
-| Virtualization | `[VMware / VirtualBox]` |
-| Domain name | `[lab domain, for example lab.local]` |
-| Tools used | Server Manager, Active Directory Users and Computers (ADUC), DNS Manager, PowerShell |
+## Planned features
 
-All accounts are test accounts with fake data. No real user information is stored in this repository.
+**Identity and access**
+- Single sign-on with Entra ID using OpenID Connect (MSAL)
+- MFA through Entra ID for test users
+- Role-based access in the app: Requester, Helpdesk, Admin
+- Group-based access to the application
+- Audit log of sign-ins and actions
 
-## What is built so far
+**Ticketing (built into the same app)**
+- Ticket types: new hire, access request, role change, offboarding, password reset
+- ITIL-style classification (incident or service request), priority, status, and closure notes
+- Approval step before any identity change is made
 
-1. **Domain controller.** Promoted a Windows Server to a domain controller and created the domain.
-2. **Domain join.** Joined a Windows 11 client to the domain and signed in with a domain account.
-3. **User creation.** Created about 5 user accounts with PowerShell and administered them, including password resets.
-4. **Group Policy.** Applied a policy setting a minimum password length and an account lockout timer.
+**User lifecycle (joiner, mover, leaver)**
+- Approved tickets trigger changes through Microsoft Graph: create a user and add groups, change group membership, or disable an account
+- Results are written back to the ticket
 
-## Planned design
+**Safeguards**
+- A requester cannot approve their own ticket
+- Automation is limited to a designated test group of users
+- Least-privilege Graph permissions
+- Dry-run mode that logs what would change
+- Secrets are kept out of the repository
 
-The goal is for an approved ticket to trigger the matching identity change without anyone running a script by hand. Because the domain controller sits inside the lab, the planned design has a small worker inside the lab that checks the ticketing tool for approved tickets and makes the change, so nothing in the lab needs to be exposed to the internet.
+## Planned architecture
 
 ```mermaid
 flowchart LR
-    A[Ticket created] --> B[Approval]
-    B --> C[Worker checks for approved tickets]
-    C --> D[PowerShell action in Active Directory]
-    D --> E[Result written back to ticket]
-    D --> F[Sync to Entra ID]
+    U[User] --> A[Portal app]
+    A -->|OpenID Connect sign-in and MFA| E[Entra ID]
+    A --> T[(Tickets and audit log)]
+    A -->|approved ticket| G[Microsoft Graph API]
+    G --> E
 ```
 
-**Planned ticket types**
+## Planned tech stack
 
-| Ticket | ITIL category | Action |
-|---|---|---|
-| New hire | Service request | Create the user and add role groups |
-| Access request | Service request | Add the user to a group after approval |
-| Role change | Service request | Add new access and remove the old |
-| Offboarding | Service request | Disable the account, remove groups, move to a Disabled OU |
-| Password reset or lockout | Incident | Reset the password or unlock the account |
+| Layer | Choice |
+|---|---|
+| App | Python and Flask |
+| Authentication | Entra ID with MSAL (OpenID Connect) |
+| Identity actions | Microsoft Graph API |
+| Storage | SQLite for tickets and the audit log |
+| Hosting | Runs locally first; Azure hosting is optional later |
 
-**Planned safeguards**
+## Status
 
-- Act only on approved tickets, and never let a requester approve their own ticket.
-- Restrict the automation to the lab OU so it cannot touch other accounts.
-- Run it under a limited service account, not a domain administrator.
-- Include a dry-run mode that logs what would change.
-- Log every action and write the result back to the ticket.
-- Keep credentials out of the repository.
+| Milestone | Status |
+|---|---|
+| Test users and groups in the Entra ID tenant | Planned |
+| App registration and single sign-on | Planned |
+| App roles (Requester, Helpdesk, Admin) enforced in the app | Planned |
+| Ticket creation, listing, and status changes | Planned |
+| Approval workflow, with self-approval blocked | Planned |
+| Graph actions triggered by approved tickets | Planned |
+| Audit log | Planned |
+| Documentation, diagram, and demo | Planned |
 
-## Repository layout
+## Scope notes
 
-```
-.
-├── README.md
-├── docs/            # lab notes, diagrams, troubleshooting write-ups
-├── scripts/         # PowerShell scripts (planned)
-└── kb-articles/     # short how-to articles for common issues (planned)
-```
+- Features that need paid Entra ID licenses (such as Conditional Access) are out of scope unless a trial is available.
+- Sign-in and audit logs on the free tier are kept for a short time, so screenshots and exports are captured as the work progresses.
 
-Folders will be added as the work is completed.
+## Security notes
 
-## Skills practiced
-
-Active Directory, Windows Server, Group Policy, PowerShell, DNS, user and password administration, help desk workflows, and technical documentation.
-
-## Notes
-
-- This is a learning lab, not a production system.
-- Entra ID features that need a paid license are out of scope unless a trial is available.
-- Do not commit passwords, tenant IDs, real email addresses, or screenshots that show account details.
+- Use a test tenant or clearly named test users only.
+- Never commit client secrets, tenant IDs, real email addresses, or screenshots that show account details.
+- Keep Graph permissions as narrow as the features allow.
 
 ## Author
 
