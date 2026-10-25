@@ -56,11 +56,12 @@ flowchart LR
 
 | Layer | Choice |
 |---|---|
-| App | Python and Flask |
+| App | Python and FASTApi |
 | Authentication | Entra ID with MSAL (OpenID Connect) |
 | Identity actions | Microsoft Graph API |
 | Storage | SQLite for tickets and the audit log |
 | Hosting | Runs locally first; Azure hosting is optional later |
+| Front End | React and TypeScript for platform user interface from an Azure-hosted app
 
 ## Status
 
