@@ -2,11 +2,11 @@
 
 A single application that provides Okta-style identity features (single sign-on, multi-factor authentication, role-based access, and user lifecycle management) on top of Microsoft Entra ID, with a help desk ticketing system built into the same product.
 
-> **Status: early stage.** This repository is at the planning stage. The design and milestones below describe what is planned, not what is built. The status table is updated as each piece is completed.
+> **Status: building stage.** This repository is at the planning stage. The design and milestones below describe what is planned, not what is built. The status table is updated as each piece is completed.
 
 ## The problem
 
-Many organizations split identity and support across separate vendors: one product for sign-in and access (for example an identity provider such as Okta), and another for tickets (for example a separate help desk platform). An access request, a password reset, or a new hire then involves a ticket in one system and a manual change in another, with no single record of who requested what, who approved it, and what changed.
+Many organizations split identity and support across separate vendors: one product for sign-in and access (for example an identity provider such as Okta), and another for tickets (for example a separate help desk platform). An access request, a password reset, or a new hire then involves a ticket in one system and a manual change in another, with no single record of who requested what, who approved it, and what changed. Learning a front-end framework.
 
 This project explores a streamlined alternative: identity and ticketing in one application, where an approved ticket drives the identity change and every step is logged in one place.
 
