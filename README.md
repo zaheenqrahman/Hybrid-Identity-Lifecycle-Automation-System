@@ -14,7 +14,7 @@ This project explores a streamlined alternative: identity and ticketing in one a
 
 - **It is** an application built on Microsoft Entra ID, using its sign-in, MFA, groups, and Microsoft Graph API to deliver an Okta-like experience (central sign-in, role-based access, lifecycle changes) together with ticketing.
 - **It is not** a re-implementation of Okta. Entra ID is the identity provider. The project's own work is the application layer on top: roles, approvals, ticket-driven lifecycle actions, and audit logging.
-- It runs against a test tenant with fake users. It is a learning project, not a production system.
+- It runs against a test tenant with fake users. It is a project to introduce a solution to fix a problem that should be more streamlined for users to access.
 
 ## Planned features
 
