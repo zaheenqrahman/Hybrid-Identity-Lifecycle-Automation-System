@@ -1,4 +1,4 @@
-# Unified Identity Lifecycle Platform and System Automated
+# Network-Aware IAM and Zero-Trust Platform 
 
 A single application that provides Okta-style identity features (single sign-on, multi-factor authentication, role-based access, and user lifecycle management) on top of Microsoft Entra ID, with a help desk ticketing system built into the same product.
 
@@ -56,12 +56,13 @@ flowchart LR
 
 | Layer | Choice |
 |---|---|
-| App | Python and FASTApi |
+| App | Python and FASTApi (maybe Okta Node/Python SDKs within it) |
 | Authentication | Entra ID with MSAL (OpenID Connect) |
 | Identity actions | Microsoft Graph API |
 | Storage | SQLite for tickets and the audit log |
 | Hosting | Runs locally first; Azure hosting is optional later |
 | Front End | React and TypeScript for platform user interface from an Azure-hosted app
+| Agent/Agentic Flow|  Anthropic API, Build a MCP, LangGraph, Pydantic
 
 ## Status
 
