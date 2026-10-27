@@ -1,4 +1,4 @@
-# Network-Aware Zero-Trust Automated Platform (IAM)
+# Network-Aware Zero-Trust Automated System (IAM)
 
 A single application that provides Okta-style identity features (single sign-on, multi-factor authentication, role-based access, and user lifecycle management) on top of Microsoft Entra ID, with a help desk ticketing system built into the same product.
 
