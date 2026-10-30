@@ -1,20 +1,15 @@
-# Network-Aware Zero-Trust Automated System (IAM)
+# Network-Aware Zero-Trust Automated IAM Platform/System
 
-A single application that provides Okta-style identity features (single sign-on, multi-factor authentication, role-based access, and user lifecycle management) on top of Microsoft Entra ID, with a help desk ticketing system built into the same product.
+A single application platform hosted on Azure with testing and deployement pipelines used to streamline vendor specific uses like ticketing, IAM with authentication features reducing user fatigue and increasing ease of access built with a front end platform that is easy to navigate. The back end will be secured using network security protocols = API's with tools.
 
-> **Status: building stage.** This repository is at the planning stage. The design and milestones below describe what is planned, not what is built. The status table is updated as each piece is completed.
+> **Status: building stage.** This repository is at the planning stage. 
 
 ## The problem
 
-Many organizations split identity and support across separate vendors: one product for sign-in and access (for example an identity provider such as Okta), and another for tickets (for example a separate help desk platform). An access request, a password reset, or a new hire then involves a ticket in one system and a manual change in another, with no single record of who requested what, who approved it, and what changed. Learning a front-end framework.
+Many organizations split identity and support across separate vendors: one product for sign-in and access (for example an identity provider such as Okta), another complete seperate vendor platform that has to make users log in again to request a ticket that can increase fatigue especially when there is little to no help when something breaks. An agent is also available directly to talk to on the original sign in and access platform page to get to the app's resources sucessfully for the user's ease of access.
 
-This project explores a streamlined alternative: identity and ticketing in one application, where an approved ticket drives the identity change and every step is logged in one place.
 
-## What this is, and is not
-
-- **It is** an application built on Microsoft Entra ID, using its sign-in, MFA, groups, and Microsoft Graph API to deliver an Okta-like experience (central sign-in, role-based access, lifecycle changes) together with ticketing.
-- **It is not** a re-implementation of Okta. Entra ID is the identity provider. The project's own work is the application layer on top: roles, approvals, ticket-driven lifecycle actions, and audit logging.
-- It runs against a test tenant with fake users. It is a project to introduce a solution to fix a problem that should be more streamlined for users to access.
+ An application built on Microsoft Entra ID, using its sign-in, MFA, groups, and Microsoft Graph API to deliver an Okta-like experience (central sign-in, role-based access, lifecycle changes) together with ticketing. It runs against a test tenant with fake users. It is a project to introduce a solution to fix a problem that should be more streamlined for users to access.
 
 ## Planned features
 
@@ -27,7 +22,7 @@ This project explores a streamlined alternative: identity and ticketing in one a
 
 **Ticketing (built into the same app)**
 - Ticket types: new hire, access request, role change, offboarding, password reset
-- ITIL-style classification (incident or service request), priority, status, and closure notes
+- SLA, ticket's notes, documentation bases
 - Approval step before any identity change is made
 
 **User lifecycle (joiner, mover, leaver)**
@@ -41,7 +36,7 @@ This project explores a streamlined alternative: identity and ticketing in one a
 - Dry-run mode that logs what would change
 - Secrets are kept out of the repository
 
-## Planned architecture
+## Planned architecture diagram for how the front end may interact with the back end. 
 
 ```mermaid
 flowchart LR
@@ -52,7 +47,7 @@ flowchart LR
     G --> E
 ```
 
-## Planned tech stack
+## Planned tech stack (SDK)
 
 | Layer | Choice |
 |---|---|
@@ -66,8 +61,7 @@ flowchart LR
 
 ## Status
 
-| Milestone | Status |
-|---|---|
+The plan for the first steps before I begin to create the back end: 
 | Test users and groups in the Entra ID tenant | Planned |
 | App registration and single sign-on | Planned |
 | App roles (Requester, Helpdesk, Admin) enforced in the app | Planned |
@@ -77,16 +71,11 @@ flowchart LR
 | Audit log | Planned |
 | Documentation, diagram, and demo | Planned |
 
-## Scope notes
+## The scope
 
 - Features that need paid Entra ID licenses (such as Conditional Access) are out of scope unless a trial is available.
 - Sign-in and audit logs on the free tier are kept for a short time, so screenshots and exports are captured as the work progresses.
 
-## Security notes
-
-- Use a test tenant or clearly named test users only.
-- Never commit client secrets, tenant IDs, real email addresses, or screenshots that show account details.
-- Keep Graph permissions as narrow as the features allow.
 
 ## Author
 
